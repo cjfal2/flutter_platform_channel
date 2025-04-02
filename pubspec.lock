@@ -9,6 +9,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.11.0"
+  battery_level_plus:
+    dependency: "direct main"
+    description:
+      name: battery_level_plus
+      sha256: "57542da1ab47203255fb5791cb186b2fa41a5647fe3421b839c682c85bed4c7e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.1"
   boolean_selector:
     dependency: transitive
     description:
@@ -139,6 +147,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.9.0"
+  plugin_platform_interface:
+    dependency: transitive
+    description:
+      name: plugin_platform_interface
+      sha256: "4820fbfdb9478b1ebae27888254d445073732dae3d6ea81f0b7e06d5dedc3f02"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.8"
   sky_engine:
     dependency: transitive
     description: flutter

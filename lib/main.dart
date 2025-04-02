@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:battery_level_plus/battery_level_plus.dart'; // 🔋 패키지 import
 
 void main() {
   runApp(const MyApp());
@@ -30,8 +31,9 @@ class _HomePageState extends State<HomePage> {
   static const _accelChannel =
       EventChannel('samples.flutter.dev/accelerometer'); // 이벤트 채널 생성
 
-  String _battery = '🔋 배터리 잔량: (버튼 클릭)';
-  String _accelData = '📦 센서 수신 중...';
+  String _batteryNative = '📱 Native 배터리 잔량: (확인 버튼 클릭)';
+  String _batteryPackage = '📦 Package 배터리 잔량: (확인 버튼 클릭)';
+  String _accelData = '📡 센서 수신 중...';
 
   @override
   void initState() {
@@ -49,17 +51,24 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  // 배터리 정보 MethodChannel 요청
+  /// 배터리 정보를 Native (PlatformChannel) + Package 방식으로 모두 가져옴
   Future<void> _getBatteryLevel() async {
     try {
-      final int result =
-          await _batteryChannel.invokeMethod('getBatteryLevel'); // 호출 메서드
+      // 🧑‍💻 Native 메서드 채널 방식
+      final int nativeLevel =
+          await _batteryChannel.invokeMethod('getBatteryLevel');
+
+      // 📦 배포한 battery_level_plus 패키지 사용
+      final int packageLevel = await BatteryLevelPlus.getBatteryLevel();
+
       setState(() {
-        _battery = '🔋 배터리 잔량: $result%';
+        _batteryNative = '📱 Native 배터리 잔량: $nativeLevel%';
+        _batteryPackage = '📦 Package 배터리 잔량: $packageLevel%';
       });
     } on PlatformException catch (e) {
       setState(() {
-        _battery = '⚠️ 오류: ${e.message}';
+        _batteryNative = '⚠️ 오류(Native): ${e.message}';
+        _batteryPackage = '⚠️ 오류(Package): ${e.message}';
       });
     }
   }
@@ -67,7 +76,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Method & EventChannel 예제')),
+      appBar: AppBar(title: const Text('🔌 PlatformChannel & Package 비교')),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -78,7 +87,9 @@ class _HomePageState extends State<HomePage> {
               child: const Text('🔋 배터리 잔량 확인'),
             ),
             const SizedBox(height: 12),
-            Text(_battery, style: const TextStyle(fontSize: 18)),
+            Text(_batteryNative, style: const TextStyle(fontSize: 18)),
+            const SizedBox(height: 6),
+            Text(_batteryPackage, style: const TextStyle(fontSize: 18)),
             const Divider(height: 40),
             const Text('📡 가속도 센서 (실시간):'),
             const SizedBox(height: 8),
